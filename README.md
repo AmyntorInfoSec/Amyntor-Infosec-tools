@@ -1,1 +1,1 @@
-The tools amde for Amyntor infosec
+The tools made for Amyntor infosec
