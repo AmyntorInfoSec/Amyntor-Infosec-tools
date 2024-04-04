@@ -96,17 +96,17 @@ except:
         
 unique_urls=set() # clear set
 value1="abhi"
-value2="\"abhi<>%27<>%3F~!%23$^%26*()_+-=[]{},.@%"
+value2="\"abhi<>%27<>%3F~!%23$^%26*()_+-=[]{},.@"
 
-user_in=input("1.abhi\n2.\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@%\n3.\"abhi<>'\nEnter Mode:")
+user_in=input("1.abhi\n2.\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@\n3.\"abhi<>'\nEnter Mode:")
 if user_in==1:
     value2="abhi"
 if user_in==2:
-    value2="\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@%"
+    value2="\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@"
 if user_in==3:
     value2="\"abhi<>'"
 else:
-    value2="\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@%"
+    value2="\"abhi<>%27%3F~!%23$^%26*()_+-=[]{},.@"
     
 
 
@@ -119,7 +119,10 @@ import re
 import requests
 import time
 
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36','referer':''}
+
 #-------------- resuming - dont touch any variables - abhishek dirisipo : ) --------------
+
 def extract_file_name(file_path):
     pattern = r'.*/([^/]+)\.txt$'
     match = re.match(pattern, file_path)
@@ -153,11 +156,11 @@ def count_symbols(response_text, symbols):
 
 time_delay=0
 
-def fire_params(url_with_param,value_received,time_delay):
+def fire_params(url_with_param,value_received,time_delay,headers):
 
     try:
        
-        response = requests.get(url_with_param)
+        response = requests.get(url_with_param,headers=headers)
         response_text = response.text
         response_text=response_text.lower()
         content_type = response.headers.get('Content-Type')
@@ -174,6 +177,9 @@ def fire_params(url_with_param,value_received,time_delay):
             
         if "\"abhi<>" in response_text and content_type and 'html' in content_type:
             with open("logs/xsslogs-1.txt", 'a') as log_file:
+                log_file.write(url_with_param+ "\n")
+        elif "\"\"abhi" in response_text and content_type and 'html' in content_type:
+            with open("logs/xsslogs-doubleQuotes.txt", 'a') as log_file:
                 log_file.write(url_with_param+ "\n")
         
         return symbols_total_count,reflections_count,response.status_code,len(response_text),time_delay
@@ -250,7 +256,7 @@ with open(unique_url_file) as unique_urls:
             print(str(url_count)+" [Main]:"+unique_url_with_fake_param2)
             
             time.sleep(time_delay) # delay time before request
-            response1=response2 = requests.get(unique_url_with_fake_param2)
+            response1=response2 = requests.get(unique_url_with_fake_param2,headers=headers)
             response_text2=response2.text
             response_text1=response_text2=response_text2.lower()
             
@@ -308,7 +314,7 @@ with open(unique_url_file) as unique_urls:
                     time.sleep(time_delay) # time delay before request
                     
                     try:
-                        symbols_total_count,reflections_count,status_code2,response_length2,time_delay=fire_params(url_with_param,value2,time_delay) #firing params here
+                        symbols_total_count,reflections_count,status_code2,response_length2,time_delay=fire_params(url_with_param,value2,time_delay,headers) #firing params here
                         
                     except:
                         write_log_filtered("[ERROR] :"+url_with_param,fn)
@@ -348,7 +354,7 @@ with open(unique_url_file) as unique_urls:
 
    
         except requests.RequestException as e:
-            print("Error sending request to", url)
+            print("Error sending request to", unique_url_with_fake_param2)
             save_count(file_name,url_count)
             continue
             
